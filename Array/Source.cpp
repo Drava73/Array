@@ -11,6 +11,8 @@ class MyArray
     int Count;
     int size;
     int capacity;
+    int grow;
+    int sRound(int _size, int _grow);
 public:
     MyArray();
     MyArray(int);
@@ -23,14 +25,14 @@ public:
     void FreeExtra();
     void RemoveAll();
     void GetAt(int ob);
-    void SetAt(int pos);
-    MyArray& operator[](const MyArray&);
-    void Add();
-    void Append(const MyArray&);
-    MyArray& operator=(const MyArray&);
+    void SetAt(int i, T obj);
+    MyArray& operator[](const MyArray& obj);
+    void Add(T obj);
+    void Append(const MyArray& obj);
+    MyArray& operator=(const MyArray& obj);
     void GetData();
-    void InsertAt(int pos);
-    void RemoveAt(int pos);
+    void InsertAt(int i, T obj);
+    void RemoveAt(int i);
     
 
 };
@@ -126,6 +128,96 @@ template<typename T>
 void MyArray<T>::GetAt(int ob)
 {
     return arr[ob];
+}
+
+template<typename T>
+void MyArray<T>::SetAt(int i, T obj)
+{
+    arr[i] = obj;
+}
+
+template<typename T>
+MyArray& MyArray<T>::operator[](const MyArray& obj)
+{
+    if (i >= 0 && i < capacity) return arr[i];
+}
+MyArray& MyArray<T>::operator=(const MyArray& obj)
+{
+    if (arr != obj.arr)
+    {
+        capacity = obj.capacity;
+        grow = obj.grow;
+        size = obj.size;
+
+        delete[] arr;
+        arr = new T[size];
+        for (int i = 0; i < capacity; i++)
+            arr[i] = obj.arr[i];
+    }
+    return *this;
+}
+template<typename T>
+void MyArray<T>::GetData()
+{
+    return arr;
+}
+template<typename T>
+void MyArray<T>::InsertAt(int i, T obj)
+{
+    if (i >= 0 && i <= capacity)
+    {
+        if (capacity >= size) size += grow;
+        T* temp = new T[size];
+        for (int k = 0; k < i; k++)
+            temp[k] = arr[k];
+        temp[i] = obj;
+        for (int k = i; k < capacity; k++)
+            temp[k + 1] = arr[k];
+        capacity++;
+        delete[]arr;
+        arr = temp;
+    }
+}
+template<typename T>
+void MyArray<T>::RemoveAt(int i)
+{
+    if (i >= 0 && i < capacity)
+    {
+        for (int k = i; k < capacity - 1; k++)
+            arr[k] = arr[k + 1];
+        capacity--;
+    }
+}
+
+
+template<typename T>
+void MyArray<T>::Add(T obj)
+{
+    if (capacity >= size)
+    {
+        size += grow;
+        T* temp = new T[size];
+        for (int i = 0; i < capacity; i++)
+            temp[i] = arr[i];
+        delete[]arr;
+        arr = temp;
+    }
+
+    arr[capacity++] = obj;
+}
+
+template<typename T>
+void MyArray<T>::Append(const MyArray& obj)
+{
+    size = sRound(size + obj.size, grow);
+    T* temp = new T[size];
+    for (int i = 0; i < capacity; i++)
+        temp[i] = arr[i];
+    for (int i = 0; i < obj.capacity; i++)
+        temp[i + capacity] = obj.arr[i];
+    delete[] arr;
+    arr = temp;
+    capacity += obj.capacity;
 }
 
 
